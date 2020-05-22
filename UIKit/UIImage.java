@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
  * UIImage
  * 
  * @since 0.1.0
- * @author Lawrence Bensaid <lawrencebensaid@icloud.com>
  */
 public class UIImage {
 

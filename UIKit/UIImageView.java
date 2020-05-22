@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
  * 
  * @see UIImageView
  * @since 0.1.0
- * @author Lawrence Bensaid <lawrencebensaid@icloud.com>
  */
 @SuppressWarnings("serial")
 public class UIImageView extends UIView {

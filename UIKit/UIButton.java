@@ -1,24 +1,14 @@
 package UIKit;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-
-import javax.swing.JButton;
+import java.awt.Cursor;
 
 /**
  * UIButton
  * 
  * @since 0.1.0
- * @author Lawrence Bensaid <lawrencebensaid@icloud.com>
  */
 @SuppressWarnings("serial")
-public class UIButton extends JButton {
-
-  private UIColor hoverBackgroundColor;
-  private UIColor pressedBackgroundColor;
-  private Font font = new Font("Helvetica Neue", Font.PLAIN, 20);
-  private int cornerRadius = 0;
+public class UIButton extends UIText {
 
   public UIButton() {
     this(null);
@@ -30,57 +20,90 @@ public class UIButton extends JButton {
 
   public UIButton(String title, boolean enabled) {
     super(title);
-    setBorderPainted(false);
-    setContentAreaFilled(false);
-    setCornerRadius(10);
-    setBackground(new Color(196, 196, 196, 196));
-    setHoverBackgroundColor(new UIColor(196, 196, 196, 128));
-    setPressedBackgroundColor(new UIColor(196, 196, 196, 255));
-    setFont(font);
-    setForeground(new Color(96, 96, 96));
+    setCornerRadius(16);
+    padding(8);
+    bold();
+    background(UIColor.clear);
+    foreground(UIColor.systemBlue);
+    onHoverStart((uiButton) -> {
+      setCursor(new Cursor(Cursor.HAND_CURSOR));
+    });
+    onHoverEnd((uiButton) -> {
+      setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    });
   }
 
-  @Override
-  protected void paintComponent(Graphics g) {
-    font = new Font("Helvetica Neue", Font.PLAIN, getHeight() / 3);
-    setFont(font);
-    if (getModel().isPressed()) {
-      g.setColor(pressedBackgroundColor.toAWT());
-    } else if (getModel().isRollover()) {
-      g.setColor(hoverBackgroundColor.toAWT());
-    } else {
-      g.setColor(getBackground());
+  // MARK: - Chaining methods
+
+  public UIButton background(UIColor color, UIView.State state) {
+    switch (state) {
+      case normal:
+        this.background(color);
+        break;
+      case hover:
+        hoverBackgroundColor = color;
+        break;
+      case active:
+        pressedBackgroundColor = color;
+        break;
+      case disabled:
+        disabledBackgroundColor = color;
+        break;
     }
-    g.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius);
-    super.paintComponent(g);
+    return this;
+  }
+
+  public UIButton background(UIColor color) {
+    try {
+      super.background(color);
+    } catch (NullPointerException exception) {
+      String simpleName = this.getClass().getSimpleName();
+      UI.print("NilGuard: " + simpleName + ".background(UIColor) received a nil parameter. That's illegal!");
+    }
+    return this;
+  }
+
+  public UIButton foreground(UIColor color, UIView.State state) {
+    switch (state) {
+      case normal:
+        this.foreground(color);
+        break;
+      case hover:
+        hoverForegroundColor = color;
+        break;
+      case active:
+        pressedForegroundColor = color;
+        break;
+      case disabled:
+        disabledForegroundColor = color;
+        break;
+    }
+    return this;
+  }
+
+  public UIButton foreground(UIColor color) {
+    try {
+      super.foreground(color);
+      pressedForegroundColor = color.transpire(3);
+      hoverForegroundColor = color.transpire(1.5f);
+    } catch (NullPointerException exception) {
+      String simpleName = this.getClass().getSimpleName();
+      UI.print("NilGuard: " + simpleName + ".foreground(UIColor) received a nil parameter. That's illegal!",
+          exception.getStackTrace());
+    }
+    return this;
   }
 
   @Override
-  public void setContentAreaFilled(boolean b) {
+  public UIButton disabled() {
+    super.disabled();
+    return this;
   }
 
-  public void setCornerRadius(int radius) {
-    cornerRadius = radius;
-  }
-
-  public int getCornerRadius() {
-    return cornerRadius;
-  }
-
-  public UIColor getHoverBackgroundColor() {
-    return hoverBackgroundColor;
-  }
-
-  public void setHoverBackgroundColor(UIColor hoverBackgroundColor) {
-    this.hoverBackgroundColor = hoverBackgroundColor;
-  }
-
-  public UIColor getPressedBackgroundColor() {
-    return pressedBackgroundColor;
-  }
-
-  public void setPressedBackgroundColor(UIColor pressedBackgroundColor) {
-    this.pressedBackgroundColor = pressedBackgroundColor;
+  @Override
+  public UIButton disabled(boolean state) {
+    super.disabled(state);
+    return this;
   }
 
 }
